@@ -3,4 +3,10 @@ b = 3
 c = a + b
 print(c)
 
-# plt.plot(t,y2_min,'r',lw=2)
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.ones(4)
+y = np.ones(4)
+
+plt.plot(x,y)
