@@ -3,13 +3,18 @@ import math
 # import matplotlib.pyplot as plt
 
 a = 0.025 # m
-alpha = 54 # deg
-beta = 39 # degrees
-T = 0.11 # Nm
+alpha = 75 # deg
+beta = 75 # deg
+T = 1 # torque per motor
+
+# Worst case, fully flat
+alpha = 28 # deg
+beta = 15 # degrees
 
 alpha = math.radians(alpha)
 beta = math.radians(beta)
 
-Fy = a * T * np.sin(beta) / np.cos(0.5*np.pi - alpha - beta)
+Fy = T * np.sin(beta) / (a * np.cos(0.5*np.pi - alpha - beta))
 
 print('Vertical power, assuming two motors:',Fy*2,'N')
+print('Vertical power, assuming two motors:',Fy*2/9.81,'kg')
