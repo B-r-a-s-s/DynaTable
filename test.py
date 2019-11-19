@@ -5,7 +5,7 @@ import math
 a = 0.025 # m
 alpha = 75 # deg
 beta = 75 # deg
-T = 1 # torque per motor
+T = 0.47 # torque per motor
 
 # Worst case, fully flat
 alpha = 28 # deg
