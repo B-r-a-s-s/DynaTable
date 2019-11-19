@@ -1,12 +1,15 @@
-a = 1
-b = 3
-c = a + b
-print(c)
-
 import numpy as np
-import matplotlib.pyplot as plt
+import math
+# import matplotlib.pyplot as plt
 
-x = np.ones(4)
-y = np.ones(4)
+a = 0.025 # m
+alpha = 54 # deg
+beta = 39 # degrees
+T = 0.11 # Nm
 
-plt.plot(x,y)
+alpha = math.radians(alpha)
+beta = math.radians(beta)
+
+Fy = a * T * np.sin(beta) / np.cos(0.5*np.pi - alpha - beta)
+
+print('Vertical power, assuming two motors:',Fy*2,'N')
