@@ -5,13 +5,17 @@ import math
 a = 0.025 # m
 alpha = 75 # deg
 beta = 75 # deg
-T = 0.47 # torque per motor
+T = 0.34 # torque per motor
 
-nm = 2 # number of motors
+nm = 4 # number of motors
 
 # Worst case, fully flat
+
 alpha = 28 # deg
 beta = 15 # degrees
+
+# alpha = 23 # deg
+# beta = 6 # degrees
 
 alpha = math.radians(alpha)
 beta = math.radians(beta)
