@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <Encoder.h>
 
+/*
+ * DynaTable Arduino Program
+ * Version 7
+ * C. Kos, B. Cheizoo, J. de Wolde, T. Hartsuijker
+ */
+
 // Declaration of structures
 
 struct motorDC {
@@ -18,6 +24,8 @@ struct motorSV {
 };
 
 // Initialization of constants
+
+const long Tpress = 1000;
 
 const int L = 5; // Number of levels
 const int A = 20; // Maximum amplitude (mm)
@@ -44,6 +52,11 @@ const int ROTENCYB = 23;
 bool mode = 0; // Continuous mode if 'true', pulse mode if 'false'
 bool enable = 0; // In pulse mode, start cycle if 'true'
 
+bool changed = 0;
+
+unsigned long tmode = 0;
+bool timer = false;
+
 // Initialization of motor structures
 
 motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0};
@@ -58,7 +71,12 @@ Encoder rotEncY(ROTENCYA, ROTENCYB);
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Test");
+  Serial.println("DynaTable Arduino Program");
+  Serial.println("For Arduino Mega or Arduino Mega 2560");
+  Serial.println("Version 7");
+  Serial.println();
+  Serial.println("C. Kos, B. Cheizoo, J. de Wolde, T. Hartsuijker");
+  Serial.println();
   
   pinMode(ENABLE, INPUT);
   
@@ -73,12 +91,6 @@ void setup() {
 */
   
 }
-
-bool changed = 0;
-
-unsigned long tmode = 0;
-bool timer = false;
-const long Tpress = 1000;
 
 void loop() {
 

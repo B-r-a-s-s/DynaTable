@@ -1,23 +1,23 @@
 // Rotational direction calculated from the outputs of the rotary encoder
+/*
+bool rotEncAPrev = false;
+bool rotDirPrev = false;
 
-//bool rotEncAPrev = false;
-//bool rotDirPrev = false;
-//
-//bool rotDir (bool rotEncA, bool rotEncB) {
-//  bool rotDir = 0;
-//  
-//  if (rotEncA != rotEncAPrev) {
-//    rotDir = rotEncA^rotEncB && rotEncA^rotEncAPrev;
-//  }else{
-//    rotDir = rotDirPrev;
-//  }
-//  rotEncAPrev=rotEncA;
-//  rotDirPrev=rotDir;
-//  
-//  return rotDir;
-//  
-//}
-
+bool rotDir (bool rotEncA, bool rotEncB) {
+  bool rotDir = 0;
+  
+  if (rotEncA != rotEncAPrev) {
+    rotDir = rotEncA^rotEncB && rotEncA^rotEncAPrev;
+  }else{
+    rotDir = rotDirPrev;
+  }
+  rotEncAPrev=rotEncA;
+  rotDirPrev=rotDir;
+  
+  return rotDir;
+  
+}
+*/
 // The FSM used to determine the output of the motor
 
 motorDC stateMachineDC(motorDC mTemp) {
@@ -133,7 +133,7 @@ motorSV stateMachineSV(motorSV mTemp) {
     if (mode == true || (mode == false && enable == true)) {
       do {
         
-        mTemp.limit = random(30, 150);
+        mTemp.limit = random(62, 112);
         
       } while (mTemp.limit == 90);
       
