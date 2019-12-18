@@ -6,7 +6,7 @@ int D = 500;
 
 int posL = 60;
 int posR = 120;
-String dir = "L";
+String dir = "B";
 bool input = false;
 int deg;
 
@@ -29,13 +29,18 @@ void loop() {
   Serial.print("posL: ");
   Serial.print(posL);
   Serial.print(" | posR: ");
-  Serial.println(posR);
+  Serial.print(posR);
+  Serial.println();
 
+  Serial.println("Type 'L', 'R' or 'B' (30 sec)");
   for (int i = 0; i < 30; i++) {
     if (Serial.available() > 0) {
       dir = Serial.readString();
+      Serial.print("dir: ");
+      Serial.println(dir);
       if (dir == "L" || dir == "R" || dir == "B") {
 
+        Serial.println("Type 0 <= deg <= 179 (30 sec)");
         for (int i = 0; i < 30; i++) {
           if (Serial.available() > 0) {
             deg = Serial.parseInt();
