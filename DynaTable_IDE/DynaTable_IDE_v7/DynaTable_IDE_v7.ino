@@ -7,7 +7,8 @@
 // Declaration of structures
 
 struct motorDC {
-  float cRE, limit;
+  String mname;
+  float cRE, limit, mmptick;
   int dirRef, currentState, rREPrev;
 };
 
@@ -19,10 +20,9 @@ struct motorSV {
 // Initialization of constants
 
 const int L = 5; // Number of levels
+const int A = 20; // Maximum amplitude (mm)
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
-
-const float mmptickx = (57.1-10.1)/1779; // Rate
 
 const int DCXM1 = 2; // Motor pins
 const int DCXM2 = 3;
@@ -32,10 +32,12 @@ const int DCYM2 = 5;
 const int SV3 = ?;
 const int SV4 = ?;
 */
-const int ENABLE = 13; // Enable pin
+const int ENABLE = 8; // Enable pin
 
 const int ROTENCXA = 11; // Rotary encoder pins
 const int ROTENCXB = 12;
+const int ROTENCYA = 22;
+const int ROTENCYB = 23;
 
 // Initialization of variables used in the main functions and the FSM
 
@@ -44,38 +46,39 @@ bool enable = 0; // In pulse mode, start cycle if 'true'
 
 // Initialization of motor structures
 
-motorDC m1 = {0, 0, 0, 0};
-//motorDC m2 = {0, 0, 0, 0};
+motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0};
+motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0};
 
 //Servo sv3;
 //motorSV m3 = {90, 0};
 
 // Initialization rotary encoder
 Encoder rotEncX(ROTENCXA, ROTENCXB);
+Encoder rotEncY(ROTENCYA, ROTENCYB);
 
 void setup() {
+  Serial.begin(115200);
+  Serial.println("Test");
+  
   pinMode(ENABLE, INPUT);
   
 	pinMode(DCXM2, OUTPUT);
 	pinMode(DCXM1, OUTPUT);
-/*  
+  
   pinMode(DCYM2, OUTPUT);
   pinMode(DCYM1, OUTPUT);
-
+/*
   sv3.attach(SV3);
   sv3.write(90);
 */
-	Serial.begin(115200);
-  Serial.println("Test");
   
 }
 
-unsigned long i = 0;
 bool changed = 0;
 
 unsigned long tmode = 0;
 bool timer = false;
-const long Dpress = 1000;
+const long Tpress = 1000;
 
 void loop() {
 
@@ -87,7 +90,7 @@ void loop() {
       timer = true;
     }
     
-    if (millis >= tmode + Dpress) {
+    if (millis() >= tmode + Tpress) {
       if (mode == true) {
         mode = false;
       }else if (mode == false) {
@@ -99,7 +102,6 @@ void loop() {
       timer = false;
     }
   }else{
-    i = 0;
     if (enable == false && changed == true) {
       changed = false;
     }
@@ -107,33 +109,45 @@ void loop() {
   }
 
   m1 = stateMachineDC(m1);
-/*
-	m2 = stateMachineDC(m2);
-*/
-	switch (m1.dirRef) {
-		case -1:
-		
-		digitalWrite(DCXM2, LOW);
-		digitalWrite(DCXM1, HIGH);
-    		
-		break;
 
-		case 0:
-		
-		digitalWrite(DCXM2, LOW);
-		digitalWrite(DCXM1, LOW);
-		
-		break;
+  int rREX = rotEncX.read();
+//  if (rREX != m1.rREPrev) {
+    m1.rREPrev = rREX;
+    m1.cRE += m1.dirRef;
+//  }
 
-		case 1:
-		
-		digitalWrite(DCXM2, HIGH);
-		digitalWrite(DCXM1, LOW);
-		
-		break;
-		
-	}
-/*
+  switch (m1.dirRef) {
+    case -1:
+      
+    digitalWrite(DCXM2, LOW);
+    digitalWrite(DCXM1, HIGH);
+          
+    break;
+
+    case 0:
+    
+    digitalWrite(DCXM2, LOW);
+    digitalWrite(DCXM1, LOW);
+    
+    break;
+
+    case 1:
+    
+    digitalWrite(DCXM2, HIGH);
+    digitalWrite(DCXM1, LOW);
+    
+    break;
+      
+  }
+
+  m2 = stateMachineDC(m2);
+
+  int rREY = rotEncY.read();
+//  if (rREY != m2.rREPrev) {
+    m2.rREPrev = rREY;
+    m2.cRE += m2.dirRef;
+//  }
+
   switch (m2.dirRef) {
     case -1:
     
@@ -157,45 +171,10 @@ void loop() {
     break;
     
   }
-
+/*
   m3 = stateMachineSV(m3);
 
   sv3.write(m3.limit);
 */
-
-  int rREX = rotEncX.read();
-  if (rREX != m1.rREPrev) {
-    m1.rREPrev = rREX;
-    m1.cRE += m1.dirRef;
-  }
-/*
-  Serial.print("m1.currentState: ");
-  Serial.print(m1.currentState);
-  Serial.print(" | m1.z: ");
-  Serial.print(m1.z, 5);
-  Serial.print(" | m1.limit: ");
-  Serial.print(m1.limit, 5);
-  Serial.print(" | m1.dirRef: ");
-  Serial.print(m1.dirRef);
-  Serial.print(" | cREX: ");
-  Serial.println(cREX);
-
-  m2.z += (m2.dirRef*m2.v*(D/1000));
-
-  Serial.print("m2.currentState: ");
-  Serial.print(m2.currentState);
-  Serial.print(" | m2.z: ");
-  Serial.print(m2.z, 4);
-  Serial.print(" | m2.limit: ");
-  Serial.print(m2.limit, 4);
-  Serial.print(" | m2.dirRef: ");
-  Serial.println(m2.dirRef);
-
-  Serial.print("m3.currentState: ");
-  Serial.print(m3.currentState);
-  Serial.print(" | m3.limit: ");
-  Serial.println(m3.limit, 3);
-*/
-  ;
 
 }

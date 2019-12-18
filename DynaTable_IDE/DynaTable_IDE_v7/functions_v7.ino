@@ -28,8 +28,7 @@ motorDC stateMachineDC(motorDC mTemp) {
     if (mode == 1 || (mode == 0 && enable == 1)) {
       do {
         
-//        mTemp.limit = 2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1);
-        mTemp.limit = 1779;
+        mTemp.limit = (2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1))/mTemp.mmptick;
         
       } while (mTemp.limit == 0);
       
@@ -43,6 +42,10 @@ motorDC stateMachineDC(motorDC mTemp) {
         mTemp.dirRef = 0;
         mTemp.currentState = 0;
       }
+      
+      Serial.print(mTemp.mname);
+      Serial.print(".limit: ");
+      Serial.println(mTemp.limit);
       
     }else{
       mTemp.currentState = 0;
@@ -58,6 +61,10 @@ motorDC stateMachineDC(motorDC mTemp) {
       mTemp.currentState = 2;
       mTemp.limit = 0;
       mTemp.dirRef = -1;
+      
+      Serial.print(mTemp.mname);
+      Serial.print(".limit: ");
+      Serial.println(mTemp.limit);
     }else{
       mTemp.currentState = 1;
       mTemp.limit = mTemp.limit;
@@ -86,6 +93,10 @@ motorDC stateMachineDC(motorDC mTemp) {
       mTemp.currentState = 4;
       mTemp.limit = 0;
       mTemp.dirRef = 1;
+      
+      Serial.print(mTemp.mname);
+      Serial.print(".limit: ");
+      Serial.println(mTemp.limit);
     }else{
       mTemp.currentState = 3;
       mTemp.limit = mTemp.limit;
