@@ -10,6 +10,9 @@ x2: 10.1mm
 ticks: 1779
 mm/tick (X): 0.0264193367060146149522203485104‬
 */
+
+xc = 0;
+
 const int M1 = 2;
 const int M2 = 3;
 
@@ -28,7 +31,7 @@ bool start = false;
 Encoder rotEncX(ROTENCAX, ROTENCBX);
 
 void setup() {
-  // put your setup code here, to run once:
+
   Serial.begin(115200);
   Serial.println("Test");
 
@@ -41,7 +44,7 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:`
+
   if (Serial.available() > 0) {
     String str = Serial.readString();
     if (str == "start") {
@@ -50,18 +53,22 @@ void loop() {
       dirRef = 1;
       start = true;
       Serial.println("high");
+    } else if (str == "5") {
+      xxx
+    } else {
+      Serial.println("input was not recognized");
     }
   }
 
   int rREX = rotEncX.read();
   if (rREX != rREXPrev) {
     rREXPrev = rREX;
-    cREX = cREX + dirRef;
+    cREX += dirRef;
     Serial.println(cREX);
   }
 
   if (start == true) {
-    if (millis() >= T + 2500) {
+    if (millis() >= T + 500) {
       digitalWrite(M1, LOW);
       dirRef = 0;
       Serial.println("low");
