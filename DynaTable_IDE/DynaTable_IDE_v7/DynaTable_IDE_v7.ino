@@ -71,11 +71,11 @@ Encoder rotEncY(ROTENCYA, ROTENCYB);
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("DynaTable Arduino Program");
-  Serial.println("For Arduino Mega or Arduino Mega 2560");
-  Serial.println("Version 7");
-  Serial.println();
-  Serial.println("C. Kos, B. Cheizoo, J. de Wolde, T. Hartsuijker");
+  Serial.println("Title:      DynaTable Arduino Program");
+  Serial.println("Board:      Arduino Mega/Arduino Mega 2560");
+  Serial.println("Version:    7");
+  Serial.println("Date:       18/12/2019");
+  Serial.println("Author(s):  C. Kos, B. Cheizoo, J. de Wolde, T. Hartsuijker");
   Serial.println();
   
   pinMode(ENABLE, INPUT);
