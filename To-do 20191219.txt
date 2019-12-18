@@ -1,0 +1,7 @@
+To-do software horizontaal
+
+Endstops
+Timing switch van pulse naar cont (negeren eerste pulse tot loslaten)
+Timing pulse ingedrukt houden (niet continue pulsen, maar één per seconde)
+Cont naar pulse -> niet doorgaan, maar stoppen, wachten, en naar 0
+Naar nul bij switch van cont naar pulse EN na iedere pulse
