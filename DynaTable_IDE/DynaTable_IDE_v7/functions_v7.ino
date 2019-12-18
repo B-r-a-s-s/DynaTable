@@ -28,8 +28,8 @@ motorDC stateMachineDC(motorDC mTemp) {
     if (mode == 1 || (mode == 0 && enable == 1)) {
       do {
         
-        mTemp.limit = 2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1);
-//        mTemp.limit = 0.01;
+//        mTemp.limit = 2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1);
+        mTemp.limit = 1779;
         
       } while (mTemp.limit == 0);
       
@@ -54,7 +54,7 @@ motorDC stateMachineDC(motorDC mTemp) {
 
     case 1:
     
-    if (mTemp.z >= mTemp.limit) {
+    if (mTemp.cRE >= mTemp.limit) {
       mTemp.currentState = 2;
       mTemp.limit = 0;
       mTemp.dirRef = -1;
@@ -68,7 +68,7 @@ motorDC stateMachineDC(motorDC mTemp) {
 
     case 2:
     
-    if (mTemp.z <= mTemp.limit) {
+    if (mTemp.cRE <= mTemp.limit) {
       mTemp.currentState = 0;
       mTemp.limit = 0;
       mTemp.dirRef = 0;
@@ -82,7 +82,7 @@ motorDC stateMachineDC(motorDC mTemp) {
 
     case 3:
     
-    if (mTemp.z <= mTemp.limit) {
+    if (mTemp.cRE <= mTemp.limit) {
       mTemp.currentState = 4;
       mTemp.limit = 0;
       mTemp.dirRef = 1;
@@ -96,7 +96,7 @@ motorDC stateMachineDC(motorDC mTemp) {
 
     case 4:
     
-    if (mTemp.z >= mTemp.limit) {
+    if (mTemp.cRE >= mTemp.limit) {
       mTemp.currentState = 0;
       mTemp.limit = 0;
       mTemp.dirRef = 0;
@@ -127,41 +127,34 @@ motorSV stateMachineSV(motorSV mTemp) {
       } while (mTemp.limit == 90);
       
       mTemp.currentState = 1;
-
-      counter++;
       
     }else{
       mTemp.currentState = 0;
       mTemp.limit = 90;
-      counter = 0;
     }
     
     break;
 
     case 1:
 
-    if (counter >= (T/D)) {
+    if (true) {
       mTemp.currentState = 2;
       mTemp.limit = 90;
-      counter = 0;
     }else{
       mTemp.currentState = 1;
       mTemp.limit = mTemp.limit;
-      counter++;
     }
     
     break;
 
     case 2:
 
-    if (counter >= (T/D)) {
+    if (true) {
       mTemp.currentState = 0;
       mTemp.limit = 90;
-      counter = 0;
     }else{
       mTemp.currentState = 2;
       mTemp.limit = mTemp.limit;
-      counter++;
     }
     
     break;
