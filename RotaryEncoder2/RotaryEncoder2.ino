@@ -11,12 +11,15 @@ ticks: 1779
 mm/tick (X): 0.0264193367060146149522203485104‬
 */
 
-xc = 0;
+float xFac = 1779 / (57.1 - 10.1);
 
-const int M1 = 2;
-const int M2 = 3;
+int xmm = 0;
+long xGoal = 0;
+int xDirFlag = 0;
+int xCountFlag = 0;
 
-int dirRef = 0;
+const int MxPos = 2; // IN1 & OUT1 & red
+const int MxNeg = 3; // IN2 & OUT2 & white
 
 const int ROTENCAX = 11; // Rotary encoder pins
 const int ROTENCBX = 12;
@@ -35,45 +38,66 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Test");
 
-  pinMode(M1, OUTPUT);
-  pinMode(M2, OUTPUT);
+  pinMode(MxPos, OUTPUT);
+  pinMode(MxNeg, OUTPUT);
 
-  digitalWrite(M1, LOW);
-  digitalWrite(M2, LOW);
+  digitalWrite(MxPos, LOW);
+  digitalWrite(MxNeg, LOW);
 
 }
 
 void loop() {
 
   if (Serial.available() > 0) {
-    String str = Serial.readString();
-    if (str == "start") {
-      digitalWrite(M1, HIGH);
-      T = millis();
-      dirRef = 1;
-      start = true;
-      Serial.println("high");
-    } else if (str == "5") {
-      xxx
+    xmm = Serial.parseInt();
+    xGoal = xFac * xmm;
+    Serial.println(xGoal);
+    if (xGoal >= cREX) {
+      xDirFlag = 1;
+      xCountFlag = 1;
+      digitalWrite(MxPos, HIGH);
+      digitalWrite(MxNeg, LOW);
+    } else if (xGoal <= cREX) {
+      xDirFlag = -1;
+      xCountFlag = -1;
+      digitalWrite(MxPos, LOW);
+      digitalWrite(MxNeg, HIGH);
     } else {
-      Serial.println("input was not recognized");
+      xDirFlag = 0;
+      digitalWrite(MxPos, LOW);
+      digitalWrite(MxNeg, LOW);
     }
   }
 
   int rREX = rotEncX.read();
   if (rREX != rREXPrev) {
     rREXPrev = rREX;
-    cREX += dirRef;
+    cREX += xCountFlag;
     Serial.println(cREX);
   }
 
-  if (start == true) {
-    if (millis() >= T + 500) {
-      digitalWrite(M1, LOW);
-      dirRef = 0;
-      Serial.println("low");
-      start = false;
+  xMove();
+
+}
+
+void xMove() {
+  if (xDirFlag == 1) {
+    if (cREX >= xGoal) {
+      xDirFlag = 0;
+      Serial.println(cREX);
+      Serial.println(xGoal);
+      Serial.println("Goal achieved");
+      digitalWrite(MxPos, LOW);
+      digitalWrite(MxNeg, LOW);
+    }
+  } else if (xDirFlag == -1) {
+    if (cREX <= xGoal) {
+      xDirFlag = 0;
+      Serial.println(cREX);
+      Serial.println(xGoal);
+      Serial.println("Goal achieved");
+      digitalWrite(MxPos, LOW);
+      digitalWrite(MxNeg, LOW);
     }
   }
-
 }
