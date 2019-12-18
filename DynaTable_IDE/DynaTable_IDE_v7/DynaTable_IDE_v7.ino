@@ -1,7 +1,7 @@
 #include <Servo.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 #include <Encoder.h>
 
 /*
@@ -15,7 +15,8 @@
 struct motorDC {
   String mname;
   float cRE, limit, mmptick;
-  int dirRef, currentState, rREPrev;
+  int dirRef, currentState, rREPrev, add, p1, p2;
+  unsigned long halt;
 };
 
 struct motorSV {
@@ -31,11 +32,6 @@ const int L = 5; // Number of levels
 const int A = 20; // Maximum amplitude (mm)
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
-
-const int DCXM1 = 2; // Motor pins
-const int DCXM2 = 3;
-const int DCYM1 = 4;
-const int DCYM2 = 5;
 /*
 const int SV3 = ?;
 const int SV4 = ?;
@@ -59,8 +55,8 @@ bool timer = false;
 
 // Initialization of motor structures
 
-motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0};
-motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0};
+motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0, 0, 2, 3, 0};
+motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0, 0, 4, 5, 0};
 
 //Servo sv3;
 //motorSV m3 = {90, 0};
@@ -80,11 +76,17 @@ void setup() {
   
   pinMode(ENABLE, INPUT);
   
-	pinMode(DCXM2, OUTPUT);
-	pinMode(DCXM1, OUTPUT);
+	pinMode(m1.p2, OUTPUT);
+	pinMode(m1.p1, OUTPUT);
+ 
+  digitalWrite(m1.p2, LOW);
+  digitalWrite(m1.p1, LOW);
   
-  pinMode(DCYM2, OUTPUT);
-  pinMode(DCYM1, OUTPUT);
+  pinMode(m2.p2, OUTPUT);
+  pinMode(m2.p1, OUTPUT);
+ 
+  digitalWrite(m2.p2, LOW);
+  digitalWrite(m2.p1, LOW);
 /*
   sv3.attach(SV3);
   sv3.write(90);
@@ -121,14 +123,22 @@ void loop() {
   }
 
   m1 = stateMachineDC(m1);
+  
+  m2 = stateMachineDC(m2);
 
   int rREX = rotEncX.read();
-//  if (rREX != m1.rREPrev) {
+  if (rREX != m1.rREPrev) {
     m1.rREPrev = rREX;
-    m1.cRE += m1.dirRef;
-//  }
+    m1.cRE += m1.add;
+  }
 
-  switch (m1.dirRef) {
+  int rREY = rotEncY.read();
+  if (rREY != m2.rREPrev) {
+    m2.rREPrev = rREY;
+    m2.cRE += m2.add;
+  }
+/*
+  switch (m1.add) {
     case -1:
       
     digitalWrite(DCXM2, LOW);
@@ -152,15 +162,7 @@ void loop() {
       
   }
 
-  m2 = stateMachineDC(m2);
-
-  int rREY = rotEncY.read();
-//  if (rREY != m2.rREPrev) {
-    m2.rREPrev = rREY;
-    m2.cRE += m2.dirRef;
-//  }
-
-  switch (m2.dirRef) {
+  switch (m2.add) {
     case -1:
     
     digitalWrite(DCYM2, LOW);
@@ -183,7 +185,7 @@ void loop() {
     break;
     
   }
-/*
+
   m3 = stateMachineSV(m3);
 
   sv3.write(m3.limit);
