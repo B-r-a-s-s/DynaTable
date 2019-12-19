@@ -2,13 +2,17 @@
 
 Servo sL, sR;
 
-int D = 500;
+int D = 2000;
+
+int LB = 65;
+int HB = 110;
 
 int posL = 60;
-int posR = 120;
+int posR = 180 - posL;
 String dir = "B";
 bool input = false;
 int deg;
+int flag = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -31,7 +35,19 @@ void loop() {
   Serial.print(" | posR: ");
   Serial.print(posR);
   Serial.println();
-
+/*
+  if (flag == 1) {
+    posL = HB;;
+    posR = LB;
+    flag = 0;
+  } else if (flag == 0) {
+    posL = LB;
+    posR = HB;
+    flag = 1;
+  } else {
+    flag = 0;
+  }
+*/
   Serial.println("Type 'L', 'R' or 'B' (30 sec)");
   for (int i = 0; i < 30; i++) {
     if (Serial.available() > 0) {
