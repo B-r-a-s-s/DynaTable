@@ -21,17 +21,27 @@ bool rotDir (bool rotEncA, bool rotEncB) {
 // The FSM used to determine the output of the motor
 
 motorDC stateMachineDC(motorDC mTemp) {
-  
+/*        
+  Serial.print(mTemp.mname);
+  Serial.print(".limit: ");
+  Serial.print(mTemp.limit);
+  Serial.print(" | ");
+  Serial.print(mTemp.mname);
+  Serial.print(".cRE: ");
+  Serial.println(mTemp.cRE);
+*/  
   switch (mTemp.currentState) {
     case 0:
 
+    pulseFlag = 0;
+
     if (millis() >= mTemp.halt + 100) {
-      if (mode == 1 || (mode == 0 && enable == 1)) {
+      if (mode == 1 || (mode == 0 && enable == 1 && pulseFlag == 1)) {
         mTemp.pulse = 0;
         
         mTemp.limit = (2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1))/mTemp.mmptick;
         
-        path(mTemp);
+        mTemp = path(mTemp);
         
       }else{
         mTemp.currentState = 0;
@@ -132,7 +142,7 @@ motorDC stateMachineDC(motorDC mTemp) {
 
     if (millis() >= mTemp.halt + 100) {
       mTemp.pulse = 1;
-      path(mTemp);
+      mTemp = path(mTemp);
     }
     
     break;
@@ -193,28 +203,29 @@ motorSV stateMachineSV(motorSV mTemp) {
   
 }
 
-void path(motorDC mTemp) {
-  if (mTemp.limit > mTemp.cRE) {
+motorDC path(motorDC mTempP) {
+  if (mTempP.limit > mTempP.cRE) {
 //    mTemp.dirRef = 1;
-    mTemp.add = 1;
-    mTemp.currentState = 1;
+    mTempP.add = 1;
+    mTempP.currentState = 1;
     
-    digitalWrite(mTemp.p2, HIGH);
-    digitalWrite(mTemp.p1, LOW);
-  }else if (mTemp.limit < mTemp.cRE) {
+    digitalWrite(mTempP.p2, HIGH);
+    digitalWrite(mTempP.p1, LOW);
+  }else if (mTempP.limit < mTempP.cRE) {
 //    mTemp.dirRef = -1;
-    mTemp.add = -1;
-    mTemp.currentState = 3;
+    mTempP.add = -1;
+    mTempP.currentState = 3;
     
-    
-    digitalWrite(mTemp.p2, LOW);
-    digitalWrite(mTemp.p1, HIGH);
+    digitalWrite(mTempP.p2, LOW);
+    digitalWrite(mTempP.p1, HIGH);
   }else{
 //    mTemp.dirRef = 0;
-    mTemp.currentState = 0;
+    mTempP.currentState = 0;
   }
-        
-  Serial.print(mTemp.mname);
+  
+  Serial.print(mTempP.mname);
   Serial.print(".limit: ");
-  Serial.println(mTemp.limit);
+  Serial.println(mTempP.limit);
+
+  return mTempP;
 }

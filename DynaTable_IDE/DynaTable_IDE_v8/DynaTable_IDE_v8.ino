@@ -29,7 +29,7 @@ struct motorSV {
 const long Tpress = 1000;
 
 const int L = 5; // Number of levels
-const int A = 20; // Maximum amplitude (mm)
+const int A = 10; // Maximum amplitude (mm)
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
 /*
@@ -52,6 +52,7 @@ bool changed = 0;
 
 unsigned long tmode = 0;
 bool timer = false;
+int pulseFlag = 0;
 
 // Initialization of motor structures
 
@@ -107,24 +108,33 @@ void loop() {
     if (millis() >= tmode + Tpress) {
       if (mode == true) {
         mode = false;
-      }else if (mode == false) {
+      } else if (mode == false) {
         mode = true;
-      }else{
+      } else{
         mode = mode;
       }
       changed = true;
       timer = false;
     }
-  }else{
-    if (enable == false && changed == true) {
-      changed = false;
-    }
+  } else if (enable == false && changed == true) {
+    changed = false;
+  } else if (enable == false && changed == false && timer == true) {
+    pulseFlag = 1;
     timer = false;
+  } else {
+  }
+
+  if (enable == false && timer == true) {
+    if (millis() < tmode + Tpress) {
+      
+    } else {
+    }
+    
   }
 
   m1 = stateMachineDC(m1);
   
-  m2 = stateMachineDC(m2);
+//  m2 = stateMachineDC(m2);
 
   int rREX = rotEncX.read();
   if (rREX != m1.rREPrev) {
@@ -132,11 +142,11 @@ void loop() {
     m1.cRE += m1.add;
   }
 
-  int rREY = rotEncY.read();
-  if (rREY != m2.rREPrev) {
-    m2.rREPrev = rREY;
-    m2.cRE += m2.add;
-  }
+//  int rREY = rotEncY.read();
+//  if (rREY != m2.rREPrev) {
+//    m2.rREPrev = rREY;
+//    m2.cRE += m2.add;
+//  }
 /*
   switch (m1.add) {
     case -1:
