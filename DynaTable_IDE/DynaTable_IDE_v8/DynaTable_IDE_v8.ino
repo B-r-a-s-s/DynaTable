@@ -15,7 +15,7 @@
 struct motorDC {
   String mname;
   float cRE, limit, mmptick;
-  int dirRef, currentState, rREPrev, add, p1, p2;
+  int currentState, rREPrev, add, p1, p2, pulse;
   unsigned long halt;
 };
 
@@ -55,8 +55,8 @@ bool timer = false;
 
 // Initialization of motor structures
 
-motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0, 0, 2, 3, 0};
-motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0, 0, 4, 5, 0};
+motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0, 2, 3, 0, 0};
+motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0, 4, 5, 0, 0};
 
 //Servo sv3;
 //motorSV m3 = {90, 0};
