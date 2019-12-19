@@ -48,7 +48,7 @@ const int ROTENCYB = 23;
 bool mode = 0; // Continuous mode if 'true', pulse mode if 'false'
 bool enable = 0; // In pulse mode, start cycle if 'true'
 
-bool changed = 0;
+bool changed = false;
 
 unsigned long tmode = 0;
 bool timer = false;
@@ -118,18 +118,15 @@ void loop() {
     }
   } else if (enable == false && changed == true) {
     changed = false;
-  } else if (enable == false && changed == false && timer == true) {
-    pulseFlag = 1;
     timer = false;
   } else {
+    timer = false;
+    
   }
 
-  if (enable == false && timer == true) {
-    if (millis() < tmode + Tpress) {
-      
-    } else {
-    }
-    
+  if (enable == false && changed == false && timer == true && pulseFlag == 0) {
+    pulseFlag = 1;
+    timer = false;
   }
 
   m1 = stateMachineDC(m1);
@@ -141,6 +138,14 @@ void loop() {
     m1.rREPrev = rREX;
     m1.cRE += m1.add;
   }
+
+Serial.print(enable);
+Serial.print(" | ");
+Serial.print(timer);
+Serial.print(" | ");
+Serial.print(changed);
+Serial.print(" | ");
+Serial.println(pulseFlag);
 
 //  int rREY = rotEncY.read();
 //  if (rREY != m2.rREPrev) {

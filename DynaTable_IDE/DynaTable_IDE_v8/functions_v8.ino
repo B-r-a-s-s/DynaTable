@@ -33,11 +33,11 @@ motorDC stateMachineDC(motorDC mTemp) {
   switch (mTemp.currentState) {
     case 0:
 
-    pulseFlag = 0;
-
     if (millis() >= mTemp.halt + 100) {
-      if (mode == 1 || (mode == 0 && enable == 1 && pulseFlag == 1)) {
+      if (mode == 1 || (mode == 0 && enable == 1)) {
         mTemp.pulse = 0;
+
+        pulseFlag = 0;
         
         mTemp.limit = (2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1))/mTemp.mmptick;
         
@@ -65,6 +65,7 @@ motorDC stateMachineDC(motorDC mTemp) {
         mTemp.currentState = 5;
       } else {
         mTemp.currentState = 0;
+        pulseFlag = 0;
       }
       
 //      mTemp.limit = 0;
@@ -108,6 +109,7 @@ motorDC stateMachineDC(motorDC mTemp) {
         mTemp.currentState = 5;
       } else {
         mTemp.currentState = 0;
+        pulseFlag = 0;
       }
       
 //      mTemp.limit = 0;
