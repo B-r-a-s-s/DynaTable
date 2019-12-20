@@ -5,7 +5,7 @@ Servo sL, sR;
 int D = 2000;
 
 int LB = 65;
-int HB = 99;
+int HB = 91;
 
 int posL = LB;
 int posR = HB;
@@ -20,7 +20,7 @@ void setup() {
   // put your setup code here, to run once:
   
   sL.attach(13);
-  sR.attach(12);
+  sR.attach(11);
 
   Serial.begin(9600);
 
