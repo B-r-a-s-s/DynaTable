@@ -88,6 +88,7 @@ void loop() {
                 input = true;
                 break;
               }else{
+                Serial.println();
                 Serial.println("Please enter value between 0 and 179.");
               }
             }
@@ -95,6 +96,7 @@ void loop() {
             delay(100);
           }
         }else{
+          Serial.println();
           Serial.println("Please enter L or R or B.");
         }
       }
