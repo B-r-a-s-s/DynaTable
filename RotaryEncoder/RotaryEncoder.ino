@@ -4,11 +4,14 @@ y1: 52.9mm
 y2: 15mm
 ticks: 3078
 mm/tick (Y): 0.01231319038336582196231319038337
+max: 4471
+
 
 x1: 57.1mm
 x2: 10.1mm
 ticks: 1779
 mm/tick (X): 0.0264193367060146149522203485104‬
+max: 1555
 */
 
 float xFac = 1779 / (57.1 - 10.1);
@@ -84,7 +87,7 @@ void xMove() {
   if (xDirFlag == 1) {
     if (cREX >= xGoal) {
       xDirFlag = 0;
-      Serial.println(cREX);
+      
       Serial.println(xGoal);
       Serial.println("Goal achieved");
       digitalWrite(MxPos, LOW);

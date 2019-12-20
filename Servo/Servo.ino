@@ -5,7 +5,7 @@ Servo sL, sR;
 int D = 2000;
 
 int LB = 65;
-int HB = 91;
+int HB = 99;
 
 int posL = LB;
 int posR = HB;
