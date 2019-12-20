@@ -39,7 +39,7 @@ motorDC stateMachineDC(motorDC mTemp) {
     case 0:
 
     if (millis() >= mTemp.halt + 100) {
-      if (mode == true || (mode == false && enable == true || mTemp.back == true)) {
+      if (mode == true || ((mode == false && enable == true) || mTemp.back == true)) {
         if (mTemp.back == true && mode == false) {
           mTemp.limit = 0;
           mTemp.back = false;

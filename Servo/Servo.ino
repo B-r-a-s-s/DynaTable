@@ -107,7 +107,6 @@ void loop() {
   
       delay(100);
     }
-    Serial.println();
   
     if (dir == "L" && input == true) {
       posL = deg;
