@@ -207,8 +207,6 @@ void loop() {
     }
 */    
     m3 = stateMachineSV(m3);
-/*    
-*/
   }
 
 }
