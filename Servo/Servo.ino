@@ -69,7 +69,7 @@ void loop() {
     
   } else if (autoFlag == false) {
     Serial.print("dir: ");
-    for (int i = 0; i < 600; i++) {
+    while (true) {
       if (Serial.available() > 0) {
         dir = Serial.readString();
         Serial.print(dir);
@@ -77,7 +77,7 @@ void loop() {
   
           Serial.print(" | ");
           Serial.print("deg: ");
-          for (int i = 0; i < 600; i++) {
+          while (true) {
             if (Serial.available() > 0) {
               deg = Serial.parseInt();
               Serial.print(deg);
