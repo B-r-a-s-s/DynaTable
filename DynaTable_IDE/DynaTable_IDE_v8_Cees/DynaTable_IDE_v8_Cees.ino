@@ -1,7 +1,5 @@
 #include <Servo.h>
 #include <math.h>
-//#include <stdio.h>
-//#include <stdlib.h>
 #include <Encoder.h>
 
 /*
@@ -21,8 +19,11 @@ struct motorDC {
 };
 
 struct motorSV {
+  String mname;
   float limit;
-  int currentState;
+  int currentState, rPos;
+  unsigned long halt;
+  bool back;
 };
 
 // Initialization of constants
@@ -33,6 +34,8 @@ const int L = 5; // Number of levels
 const int A = 20; // Maximum amplitude (mm)
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
+const int LB = 65;
+const int HB = 99;
 /*
 const int SV3 = ?;
 const int SV4 = ?;
@@ -63,7 +66,7 @@ motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0, 2, 3, 0, false};
 motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0, 4, 5, 0, false};
 
 //Servo sv3;
-//motorSV m3 = {90, 0};
+motorSV m3 = {"m3", 90, 0, 90, 0, false};
 
 // Initialization rotary encoder
 Encoder rotEncX(ROTENCXA, ROTENCXB);
@@ -139,22 +142,22 @@ void loop() {
       timer = false;
     }
   
-    m1 = stateMachineDC(m1);
+//    m1 = stateMachineDC(m1);
     
-  //  m2 = stateMachineDC(m2);
+//    m2 = stateMachineDC(m2);
   
     int rREX = rotEncX.read();
-  //  if (rREX != m1.rREPrev) {
+    if (rREX != m1.rREPrev) {
       m1.rREPrev = rREX;
       m1.cRE += m1.add;
-  //  }
+    }
   
     int rREY = rotEncY.read();
     if (rREY != m2.rREPrev) {
       m2.rREPrev = rREY;
       m2.cRE += m2.add;
     }
-  /*
+/*
     switch (m1.add) {
       case -1:
         
@@ -202,11 +205,10 @@ void loop() {
       break;
       
     }
-  
+*/    
     m3 = stateMachineSV(m3);
-  
-    sv3.write(m3.limit);
-  */
+/*    
+*/
   }
 
 }

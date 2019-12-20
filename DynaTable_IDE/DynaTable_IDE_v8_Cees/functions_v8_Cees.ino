@@ -164,46 +164,50 @@ motorDC stateMachineDC(motorDC mTemp) {
 }
 
 motorSV stateMachineSV(motorSV mTemp) {
+
+  Serial.print(mTemp.mname);
+  Serial.print(" | ");
+  Serial.print("limit: ");
+  Serial.print(mTemp.limit);
+  Serial.print(" | ");
+  Serial.print("currentState: ");
+  Serial.print(mTemp.currentState);
+  Serial.println();
   
   switch (mTemp.currentState) {
     case 0:
     
-    if (mode == true || (mode == false && enable == true)) {
-      do {
-        
-        mTemp.limit = random(62, 112);
-        
-      } while (mTemp.limit == 90);
-      
-      mTemp.currentState = 1;
+    if (mode == true || (mode == false && enable == true || mTemp.back == true)) {
+      if (mTemp.back == true && mode == false) {
+        mTemp.limit = 90;
+        mTemp.back = false;
+      } else {
+        mTemp.limit = random(LB, HB+1);
+      }
+
+      if (mTemp.rPos != mTemp.limit) {
+        mTemp.currentState = 1;
+
+        mTemp.halt = millis();
+      } else {
+        mTemp.currentState = 0;
+      }
       
     }else{
       mTemp.currentState = 0;
-      mTemp.limit = 90;
     }
     
     break;
 
     case 1:
 
-    if (true) {
-      mTemp.currentState = 2;
-      mTemp.limit = 90;
+    if (millis() >= mTemp.halt + 1000) {
+      mTemp.currentState = 0;
+      mTemp.back = true;
+      
+      mTemp.rPos = mTemp.limit;
     }else{
       mTemp.currentState = 1;
-      mTemp.limit = mTemp.limit;
-    }
-    
-    break;
-
-    case 2:
-
-    if (true) {
-      mTemp.currentState = 0;
-      mTemp.limit = 90;
-    }else{
-      mTemp.currentState = 2;
-      mTemp.limit = mTemp.limit;
     }
     
     break;
