@@ -1,0 +1,233 @@
+// Rotational direction calculated from the outputs of the rotary encoder
+/*
+bool rotEncAPrev = false;
+bool rotDirPrev = false;
+
+bool rotDir (bool rotEncA, bool rotEncB) {
+  bool rotDir = 0;
+  
+  if (rotEncA != rotEncAPrev) {
+    rotDir = rotEncA^rotEncB && rotEncA^rotEncAPrev;
+  }else{
+    rotDir = rotDirPrev;
+  }
+  rotEncAPrev=rotEncA;
+  rotDirPrev=rotDir;
+  
+  return rotDir;
+  
+}
+*/
+// The FSM used to determine the output of the motor
+
+motorDC stateMachineDC(motorDC mTemp) {
+
+  Serial.print(mTemp.mname);
+  Serial.print(" | ");
+  Serial.print("cRE: ");
+  Serial.print(mTemp.cRE);
+  Serial.print(" | ");
+  Serial.print("limit: ");
+  Serial.print(mTemp.limit);
+  Serial.print(" | ");
+  Serial.print("currentState: ");
+  Serial.print(mTemp.currentState);
+  Serial.println();
+  
+  switch (mTemp.currentState) {
+
+    case 0:
+
+    if (millis() >= mTemp.halt + 1000) {
+      if (mode == true || ((mode == false && enable == true) || mTemp.back == true)) {
+        if (mTemp.back == true && mode == false) {
+          mTemp.limit = 0;
+          mTemp.back = false;
+        } else {
+          mTemp.limit = (2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1))/mTemp.mmptick;
+        }
+        
+        if (mTemp.limit > mTemp.cRE) {
+//          mTemp.dirRef = 1;
+          mTemp.add = 1;
+          mTemp.currentState = 1;
+          
+          digitalWrite(mTemp.p2, HIGH);
+          digitalWrite(mTemp.p1, LOW);
+        }else if (mTemp.limit < mTemp.cRE) {
+//          mTemp.dirRef = -1;
+          mTemp.add = -1;
+          mTemp.currentState = 3;
+          
+          digitalWrite(mTemp.p2, LOW);
+          digitalWrite(mTemp.p1, HIGH);
+        }else{
+//          mTemp.dirRef = 0;
+          mTemp.currentState = 0;
+        }
+        
+      }else{
+        mTemp.currentState = 0;
+//        mTemp.limit = 0;
+//        mTemp.dirRef = 0;
+      }
+    }
+    
+    break;
+
+    case 1:
+    
+    if (mTemp.cRE >= mTemp.limit) {
+      mTemp.back = true;
+      
+      mTemp.currentState = 0;
+//      mTemp.limit = 0;
+//      mTemp.dirRef = 0;
+//      mTemp.add = -1;
+      mTemp.halt = millis();
+
+//      mTemp.add = 0; // LATER VERWIJDEREN!
+        
+      digitalWrite(mTemp.p2, LOW);
+      digitalWrite(mTemp.p1, LOW);
+    } else {
+//      mTemp.currentState = 1;
+//      mTemp.limit = mTemp.limit;
+//      mTemp.dirRef = 1;
+    }
+    
+    break;
+/*
+    case 2:
+    
+    if (mTemp.cRE <= mTemp.limit) {
+
+      if (mode == 0) {
+        mTemp.back = true;
+      }
+      
+      mTemp.currentState = 0;
+      mTemp.limit = 0;
+        
+      digitalWrite(mTemp.p2, LOW);
+      digitalWrite(mTemp.p1, LOW);
+    } else {
+//      mTemp.currentState = 2;
+//      mTemp.limit = 0;
+//      mTemp.dirRef = -1;
+    }
+    
+    break;
+*/
+    case 3:
+    
+    if (mTemp.cRE <= mTemp.limit) {
+      mTemp.back = true;
+      
+      mTemp.currentState = 0;
+//      mTemp.limit = 0;
+//      mTemp.dirRef = 0;
+//      mTemp.add = 1;
+      mTemp.halt = millis();
+
+      mTemp.add = 0; // LATER VERWIJDEREN!
+      
+      digitalWrite(mTemp.p2, LOW);
+      digitalWrite(mTemp.p1, LOW);
+    } else {
+//      mTemp.currentState = 3;
+//      mTemp.limit = mTemp.limit;
+//      mTemp.dirRef = -1;
+    }
+    
+    break;
+/*
+    case 4:
+    
+    if (mTemp.cRE >= mTemp.limit) {
+      mTemp.currentState = 0;
+      mTemp.limit = 0;
+        
+      digitalWrite(mTemp.p2, LOW);
+      digitalWrite(mTemp.p1, LOW);
+    } else {
+      mTemp.currentState = 4;
+      mTemp.limit = 0;
+    }
+    
+    break;
+*/    
+
+  case 5:
+
+  if (mTemp.ESP == true) {
+    // set border value in motor structure, TEST THE VALUE FOR BOTH MOTORS
+    Serial.println("Edge detected");
+    if (mode == false) {
+      mTemp.limit = 0;
+//      mTemp.currentState = ?; // set new state (case) to go to 0, TEST WHICH WAY THIS IS FOR BOTH MOTORS
+    } else if (mode == true) {
+      mTemp.currentState = 0;
+    }
+  }
+
+  }
+  
+  return mTemp;
+  
+}
+
+motorSV stateMachineSV(motorSV mTemp) {
+
+  Serial.print(mTemp.mname);
+  Serial.print(" | ");
+  Serial.print("limit: ");
+  Serial.print(mTemp.limit);
+  Serial.print(" | ");
+  Serial.print("currentState: ");
+  Serial.print(mTemp.currentState);
+  Serial.println();
+  
+  switch (mTemp.currentState) {
+    case 0:
+    
+    if (mode == true || (mode == false && enable == true || mTemp.back == true)) {
+      if (mTemp.back == true && mode == false) {
+        mTemp.limit = 90;
+        mTemp.back = false;
+      } else {
+        mTemp.limit = random(LB, HB+1);
+      }
+
+      if (mTemp.rPos != mTemp.limit) {
+        mTemp.currentState = 1;
+
+        mTemp.halt = millis();
+      } else {
+        mTemp.currentState = 0;
+      }
+      
+    }else{
+      mTemp.currentState = 0;
+    }
+    
+    break;
+
+    case 1:
+
+    if (millis() >= mTemp.halt + 1000) {
+      mTemp.currentState = 0;
+      mTemp.back = true;
+      
+      mTemp.rPos = mTemp.limit;
+    }else{
+      mTemp.currentState = 1;
+    }
+    
+    break;
+    
+  }
+
+  return mTemp;
+  
+}

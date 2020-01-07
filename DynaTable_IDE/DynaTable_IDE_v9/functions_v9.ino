@@ -21,54 +21,31 @@ bool rotDir (bool rotEncA, bool rotEncB) {
 // The FSM used to determine the output of the motor
 
 motorDC stateMachineDC(motorDC mTemp) {
-
+/*        
   Serial.print(mTemp.mname);
-  Serial.print(" | ");
-  Serial.print("cRE: ");
-  Serial.print(mTemp.cRE);
-  Serial.print(" | ");
-  Serial.print("limit: ");
+  Serial.print(".limit: ");
   Serial.print(mTemp.limit);
   Serial.print(" | ");
-  Serial.print("currentState: ");
-  Serial.print(mTemp.currentState);
-  Serial.println();
-  
+  Serial.print(mTemp.mname);
+  Serial.print(".cRE: ");
+  Serial.println(mTemp.cRE);
+*/  
   switch (mTemp.currentState) {
-
     case 0:
 
     if (millis() >= mTemp.halt + 100) {
-      if (mode == true || ((mode == false && enable == true) || mTemp.back == true)) {
-        if (mTemp.back == true && mode == false) {
-          mTemp.limit = 0;
-          mTemp.back = false;
-        } else {
-          mTemp.limit = (2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1))/mTemp.mmptick;
-        }
+      if (mode == 1 || (mode == 0 && enable == 1)) {
+        mTemp.pulse = 0;
+
+        pulseFlag = 0;
         
-        if (mTemp.limit > mTemp.cRE) {
-//          mTemp.dirRef = 1;
-          mTemp.add = 1;
-          mTemp.currentState = 1;
-          
-          digitalWrite(mTemp.p2, HIGH);
-          digitalWrite(mTemp.p1, LOW);
-        }else if (mTemp.limit < mTemp.cRE) {
-//          mTemp.dirRef = -1;
-          mTemp.add = -1;
-          mTemp.currentState = 3;
-          
-          digitalWrite(mTemp.p2, LOW);
-          digitalWrite(mTemp.p1, HIGH);
-        }else{
-//          mTemp.dirRef = 0;
-          mTemp.currentState = 0;
-        }
+        mTemp.limit = (2*A*random(-(L-1)/2,(L-1)/2+1)/(L-1))/mTemp.mmptick;
+        
+        mTemp = path(mTemp);
         
       }else{
         mTemp.currentState = 0;
-//        mTemp.limit = 0;
+        mTemp.limit = 0;
 //        mTemp.dirRef = 0;
       }
     }
@@ -78,19 +55,23 @@ motorDC stateMachineDC(motorDC mTemp) {
     case 1:
     
     if (mTemp.cRE >= mTemp.limit) {
-      mTemp.back = true;
+      digitalWrite(mTemp.p2, LOW);
+      digitalWrite(mTemp.p1, LOW);
       
-      mTemp.currentState = 0;
+      mTemp.halt = millis();
+      
+      if (mode == 0 && mTemp.pulse == 0) {
+        mTemp.limit = 0;
+        mTemp.currentState = 5;
+      } else {
+        mTemp.currentState = 0;
+        pulseFlag = 0;
+      }
+      
 //      mTemp.limit = 0;
 //      mTemp.dirRef = 0;
 //      mTemp.add = -1;
-      mTemp.halt = millis();
-
-//      mTemp.add = 0; // LATER VERWIJDEREN!
-        
-      digitalWrite(mTemp.p2, LOW);
-      digitalWrite(mTemp.p1, LOW);
-    } else {
+    }else{
 //      mTemp.currentState = 1;
 //      mTemp.limit = mTemp.limit;
 //      mTemp.dirRef = 1;
@@ -101,17 +82,13 @@ motorDC stateMachineDC(motorDC mTemp) {
     case 2:
     
     if (mTemp.cRE <= mTemp.limit) {
-
-      if (mode == 0) {
-        mTemp.back = true;
-      }
-      
       mTemp.currentState = 0;
       mTemp.limit = 0;
-        
-      digitalWrite(mTemp.p2, LOW);
-      digitalWrite(mTemp.p1, LOW);
-    } else {
+      mTemp.dirRef = 0;
+ 
+      digitalWrite(DCXM2, LOW);
+      digitalWrite(DCXM1, LOW);
+    }else{
 //      mTemp.currentState = 2;
 //      mTemp.limit = 0;
 //      mTemp.dirRef = -1;
@@ -122,22 +99,26 @@ motorDC stateMachineDC(motorDC mTemp) {
     case 3:
     
     if (mTemp.cRE <= mTemp.limit) {
-      mTemp.back = true;
-      
-      mTemp.currentState = 0;
-//      mTemp.limit = 0;
-//      mTemp.dirRef = 0;
-//      mTemp.add = 1;
-      mTemp.halt = millis();
-
-      mTemp.add = 0; // LATER VERWIJDEREN!
-      
       digitalWrite(mTemp.p2, LOW);
       digitalWrite(mTemp.p1, LOW);
-    } else {
-//      mTemp.currentState = 3;
+      
+      mTemp.halt = millis();
+      
+      if (mode == 0 && mTemp.pulse == 0) {
+        mTemp.limit = 0;
+        mTemp.currentState = 5;
+      } else {
+        mTemp.currentState = 0;
+        pulseFlag = 0;
+      }
+      
+//      mTemp.limit = 0;
+//      mTemp.dirRef = 0;
+//      mTemp.add = -1;
+    }else{
+//      mTemp.currentState = 1;
 //      mTemp.limit = mTemp.limit;
-//      mTemp.dirRef = -1;
+//      mTemp.dirRef = 1;
     }
     
     break;
@@ -147,81 +128,73 @@ motorDC stateMachineDC(motorDC mTemp) {
     if (mTemp.cRE >= mTemp.limit) {
       mTemp.currentState = 0;
       mTemp.limit = 0;
-        
-      digitalWrite(mTemp.p2, LOW);
-      digitalWrite(mTemp.p1, LOW);
-    } else {
+      mTemp.dirRef = 0;
+ 
+      digitalWrite(DCXM2, LOW);
+      digitalWrite(DCXM1, LOW);
+    }else{
       mTemp.currentState = 4;
       mTemp.limit = 0;
+      mTemp.dirRef = 1;
     }
     
     break;
 */    
+    case 5:
 
-  case 5:
-
-  if (mTemp.ESP == true) {
-    // set border value in motor structure, TEST THE VALUE FOR BOTH MOTORS
-    Serial.println("Edge detected");
-    if (mode == false) {
-      mTemp.limit = 0;
-//      mTemp.currentState = ?; // set new state (case) to go to 0, TEST WHICH WAY THIS IS FOR BOTH MOTORS
-    } else if (mode == true) {
-      mTemp.currentState = 0;
+    if (millis() >= mTemp.halt + 100) {
+      mTemp.pulse = 1;
+      mTemp = path(mTemp);
     }
+    
+    break;
   }
 
-  }
-  
   return mTemp;
   
 }
 
 motorSV stateMachineSV(motorSV mTemp) {
-
-  Serial.print(mTemp.mname);
-  Serial.print(" | ");
-  Serial.print("limit: ");
-  Serial.print(mTemp.limit);
-  Serial.print(" | ");
-  Serial.print("currentState: ");
-  Serial.print(mTemp.currentState);
-  Serial.println();
   
   switch (mTemp.currentState) {
     case 0:
     
-    if (mode == true || (mode == false && enable == true || mTemp.back == true)) {
-      if (mTemp.back == true && mode == false) {
-        mTemp.limit = 90;
-        mTemp.back = false;
-      } else {
-        mTemp.limit = random(LB, HB+1);
-      }
-
-      if (mTemp.rPos != mTemp.limit) {
-        mTemp.currentState = 1;
-
-        mTemp.halt = millis();
-      } else {
-        mTemp.currentState = 0;
-      }
+    if (mode == true || (mode == false && enable == true)) {
+      do {
+        
+        mTemp.limit = random(62, 112);
+        
+      } while (mTemp.limit == 90);
+      
+      mTemp.currentState = 1;
       
     }else{
       mTemp.currentState = 0;
+      mTemp.limit = 90;
     }
     
     break;
 
     case 1:
 
-    if (millis() >= mTemp.halt + 1000) {
-      mTemp.currentState = 0;
-      mTemp.back = true;
-      
-      mTemp.rPos = mTemp.limit;
+    if (true) {
+      mTemp.currentState = 2;
+      mTemp.limit = 90;
     }else{
       mTemp.currentState = 1;
+      mTemp.limit = mTemp.limit;
+    }
+    
+    break;
+
+    case 2:
+
+    if (true) {
+      mTemp.currentState = 0;
+      mTemp.limit = 90;
+    }else{
+      mTemp.currentState = 2;
+      mTemp.limit = mTemp.limit;
     }
     
     break;
@@ -230,4 +203,31 @@ motorSV stateMachineSV(motorSV mTemp) {
 
   return mTemp;
   
+}
+
+motorDC path(motorDC mTempP) {
+  if (mTempP.limit > mTempP.cRE) {
+//    mTemp.dirRef = 1;
+    mTempP.add = 1;
+    mTempP.currentState = 1;
+    
+    digitalWrite(mTempP.p2, HIGH);
+    digitalWrite(mTempP.p1, LOW);
+  }else if (mTempP.limit < mTempP.cRE) {
+//    mTemp.dirRef = -1;
+    mTempP.add = -1;
+    mTempP.currentState = 3;
+    
+    digitalWrite(mTempP.p2, LOW);
+    digitalWrite(mTempP.p1, HIGH);
+  }else{
+//    mTemp.dirRef = 0;
+    mTempP.currentState = 0;
+  }
+  
+  Serial.print(mTempP.mname);
+  Serial.print(".limit: ");
+  Serial.println(mTempP.limit);
+
+  return mTempP;
 }
