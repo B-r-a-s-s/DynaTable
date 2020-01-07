@@ -86,7 +86,7 @@ motorDC stateMachineDC(motorDC mTemp) {
 //      mTemp.add = -1;
       mTemp.halt = millis();
 
-      mTemp.add = 0; // LATER VERWIJDEREN!
+//      mTemp.add = 0; // LATER VERWIJDEREN!
         
       digitalWrite(mTemp.p2, LOW);
       digitalWrite(mTemp.p1, LOW);
