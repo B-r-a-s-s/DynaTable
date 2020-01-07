@@ -157,6 +157,20 @@ motorDC stateMachineDC(motorDC mTemp) {
     
     break;
 */    
+
+  case 5:
+
+  if (mTemp.ESP == true) {
+    // set border value in motor structure, TEST THE VALUE FOR BOTH MOTORS
+    Serial.println("Edge detected");
+    if (mode == false) {
+      mTemp.limit = 0;
+//      mTemp.currentState = ?; // set new state (case) to go to 0, TEST WHICH WAY THIS IS FOR BOTH MOTORS
+    } else if (mode == true) {
+      mTemp.currentState = 0;
+    }
+  }
+
   }
   
   return mTemp;
