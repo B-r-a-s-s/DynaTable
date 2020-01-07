@@ -21,6 +21,15 @@ bool rotDir (bool rotEncA, bool rotEncB) {
 // The FSM used to determine the output of the motor
 
 motorDC stateMachineDC(motorDC mTemp) {
+
+  Serial.print(mTemp.mname);
+  Serial.print(" | ");
+  Serial.print(mTemp.mname);
+  Serial.print(" | ");
+  Serial.print(changed);
+  Serial.print(" | ");
+  Serial.println(pulseFlag);
+
 /*        
   Serial.print(mTemp.mname);
   Serial.print(".limit: ");

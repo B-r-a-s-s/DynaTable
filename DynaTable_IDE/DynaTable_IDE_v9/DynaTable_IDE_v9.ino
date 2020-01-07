@@ -77,8 +77,8 @@ void setup() {
   
   pinMode(ENABLE, INPUT);
   
-	pinMode(m1.p2, OUTPUT);
-	pinMode(m1.p1, OUTPUT);
+  pinMode(m1.p2, OUTPUT); // IN2 / OUT2 + white
+  pinMode(m1.p1, OUTPUT); // IN1 / OUT1 + red
  
   digitalWrite(m1.p2, LOW);
   digitalWrite(m1.p1, LOW);
@@ -139,19 +139,19 @@ void loop() {
     m1.cRE += m1.add;
   }
 
-Serial.print(enable);
-Serial.print(" | ");
-Serial.print(timer);
-Serial.print(" | ");
-Serial.print(changed);
-Serial.print(" | ");
-Serial.println(pulseFlag);
+//  Serial.print(enable);
+//  Serial.print(" | ");
+//  Serial.print(timer);
+//  Serial.print(" | ");
+//  Serial.print(changed);
+//  Serial.print(" | ");
+//  Serial.println(pulseFlag);
 
-//  int rREY = rotEncY.read();
-//  if (rREY != m2.rREPrev) {
-//    m2.rREPrev = rREY;
-//    m2.cRE += m2.add;
-//  }
+  int rREY = rotEncY.read();
+  if (rREY != m2.rREPrev) {
+    m2.rREPrev = rREY;
+    m2.cRE += m2.add;
+  }
 /*
   switch (m1.add) {
     case -1:
