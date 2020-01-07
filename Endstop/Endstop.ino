@@ -11,7 +11,7 @@ unsigned long edgeTime;
 int checkFlag = false;
 
 // TEMPORARY TIMER (proof of concept)
-unsigned long checkLimit = 2000;
+unsigned long checkLimit = 3000;
 unsigned long checkTimer = 0;
 
 /*
@@ -37,16 +37,23 @@ void loop() {
   
   ESI = digitalRead(ESP);
 
-  if (edgeFlag == true) {
-    if (millis() >= edgeTime + edgeWait) {
-      edgeFlag = false;
-      Serial.println("Flag set to false");
+  if (checkFlag == true) {
+    if (edgeFlag == true) {
+      if (millis() >= edgeTime + edgeWait) {
+        edgeFlag = false;
+        checkFlag = false;
+        checkTimer = millis();
+        Serial.println("Detection temporarily unavailable");
+      }
+    } else if (ESI == 0 && ESI_Prev == 1) {
+      edgeTime = millis();
+      edgeFlag = true;
+      Serial.println("Falling edge detected");
+    } else {
     }
-  } else if (ESI == 0 && ESI_Prev == 1) {
-    edgeTime = millis();
-    edgeFlag = true;
-    checkFlag = false;
-    Serial.println("Falling edge detected");
+  } else if (millis() >= checkTimer + checkLimit && checkFlag == false) {
+    checkFlag = true;
+    Serial.println("Detection available");
   } else {
   }
   
