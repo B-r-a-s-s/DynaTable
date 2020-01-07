@@ -171,6 +171,8 @@ motorDC stateMachineDC(motorDC mTemp) {
     }
   }
 
+  break;
+
   }
   
   return mTemp;

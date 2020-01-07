@@ -15,7 +15,7 @@
 struct motorDC {
   String mname;
   float cRE, limit, mmptick;
-  int currentState, rREPrev, add, p1, p2, pulse;
+  int currentState, rREPrev, add, p1, p2, pulse, ESP;
   unsigned long halt;
 };
 
@@ -28,20 +28,42 @@ struct motorSV {
 
 const long Tpress = 1000;
 
-const int L = 5; // Number of levels
+const int L = 5; // Number of levels DOES NOTHING ANYMORE, HOW WAS IT USED?
 const int A = 10; // Maximum amplitude (mm)
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
+
+const int maxMoves = 5; // Number of moves before forced calibration
+
+const float m1ticks = (57.1-10.1)/1779; // mm/tick
+const float m2ticks = (52.9-15)/3078; // mm/tick
+
+const int wait = 100;
+
 /*
 const int SV3 = ?;
 const int SV4 = ?;
 */
-const int ENABLE = 8; // Enable pin
+
+// Declaration of pins
+
+const int ENABLE = 8; // Enable pin (button)
+
+const int randPin = A0; // used for seed generation
 
 const int ROTENCXA = 11; // Rotary encoder pins
 const int ROTENCXB = 12;
 const int ROTENCYA = 22;
 const int ROTENCYB = 23;
+
+const int m1p1 = 2;
+const int m1p2 = 3;
+
+const int m2p1 = 4;
+const int m2p2 = 5;
+
+const int m1ESP = 30;
+const int m2ESP = 31;
 
 // Initialization of variables used in the main functions and the FSM
 
@@ -52,12 +74,14 @@ bool changed = false;
 
 unsigned long tmode = 0;
 bool timer = false;
-int pulseFlag = 0;
+int pulseFlag = false;
+
+int moveCount = maxMoves; // forces calibration at first move
 
 // Initialization of motor structures
 
-motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0, 2, 3, 0, 0};
-motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0, 4, 5, 0, 0};
+motorDC m1 = {"m1", 0, 0, m1ticks, 0, 0, 0, m1p1, m1p2, false, m1ESP, 0};
+motorDC m2 = {"m2", 0, 0, m2ticks, 0, 0, 0, m2p1, m2p2, false, m2ESP, 0};
 
 //Servo sv3;
 //motorSV m3 = {90, 0};
@@ -76,26 +100,33 @@ void setup() {
   Serial.println();
   
   pinMode(ENABLE, INPUT);
+  pinMode(m1ESP, INPUT);
+  pinMode(m2ESP, INPUT);
   
-  pinMode(m1.p2, OUTPUT); // IN2 / OUT2 + white
-  pinMode(m1.p1, OUTPUT); // IN1 / OUT1 + red
+  pinMode(m1.p1, OUTPUT); // IN2 / OUT2 + white
+  pinMode(m1.p2, OUTPUT); // IN1 / OUT1 + red
  
-  digitalWrite(m1.p2, LOW);
   digitalWrite(m1.p1, LOW);
+  digitalWrite(m1.p2, LOW);
   
-  pinMode(m2.p2, OUTPUT);
   pinMode(m2.p1, OUTPUT);
+  pinMode(m2.p2, OUTPUT);
  
-  digitalWrite(m2.p2, LOW);
   digitalWrite(m2.p1, LOW);
+  digitalWrite(m2.p2, LOW);
 /*
   sv3.attach(SV3);
   sv3.write(90);
 */
-  
+
+  randomSeed(analogRead(randPin));
+
 }
 
 void loop() {
+
+//  Serial.print("Moves: ");
+//  Serial.println(moveCount);
 
   enable = digitalRead(ENABLE);
 
@@ -124,10 +155,18 @@ void loop() {
     
   }
 
-  if (enable == false && changed == false && timer == true && pulseFlag == 0) {
-    pulseFlag = 1;
+  if (enable == false && changed == false && timer == true && pulseFlag == false) {
+    pulseFlag = true;
     timer = false;
   }
+
+//  Serial.print(enable);
+//  Serial.print(" | ");
+//  Serial.print(timer);
+//  Serial.print(" | ");
+//  Serial.print(changed);
+//  Serial.print(" | ");
+//  Serial.println(pulseFlag);
 
   m1 = stateMachineDC(m1);
   
@@ -139,71 +178,15 @@ void loop() {
     m1.cRE += m1.add;
   }
 
-//  Serial.print(enable);
-//  Serial.print(" | ");
-//  Serial.print(timer);
-//  Serial.print(" | ");
-//  Serial.print(changed);
-//  Serial.print(" | ");
-//  Serial.println(pulseFlag);
-
   int rREY = rotEncY.read();
   if (rREY != m2.rREPrev) {
     m2.rREPrev = rREY;
     m2.cRE += m2.add;
   }
-/*
-  switch (m1.add) {
-    case -1:
-      
-    digitalWrite(DCXM2, LOW);
-    digitalWrite(DCXM1, HIGH);
-          
-    break;
 
-    case 0:
-    
-    digitalWrite(DCXM2, LOW);
-    digitalWrite(DCXM1, LOW);
-    
-    break;
+//  m3 = stateMachineSV(m3);
 
-    case 1:
-    
-    digitalWrite(DCXM2, HIGH);
-    digitalWrite(DCXM1, LOW);
-    
-    break;
-      
-  }
+//  sv3.write(m3.limit);
 
-  switch (m2.add) {
-    case -1:
-    
-    digitalWrite(DCYM2, LOW);
-    digitalWrite(DCYM1, HIGH);
-    
-    break;
-
-    case 0:
-    
-    digitalWrite(DCYM2, LOW);
-    digitalWrite(DCYM1, LOW);
-    
-    break;
-
-    case 1:
-    
-    digitalWrite(DCYM2, HIGH);
-    digitalWrite(DCYM1, LOW);
-    
-    break;
-    
-  }
-
-  m3 = stateMachineSV(m3);
-
-  sv3.write(m3.limit);
-*/
 
 }
