@@ -13,7 +13,7 @@
 struct motorDC {
   String mname;
   float cRE, limit, mmptick;
-  int currentState, rREPrev, add, p1, p2;
+  int currentState, rREPrev, add, p1, p2, ESP;
   unsigned long halt;
   bool back;
 };
@@ -62,8 +62,8 @@ String startpauseprev = "stop";
 
 // Initialization of motor structures
 
-motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0, 2, 3, 0, false}; // spindle
-motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0, 4, 5, 0, false}; // timing belt
+motorDC m1 = {"m1", 0, 0, (57.1-10.1)/1779, 0, 0, 0, 2, 3, 30, 0, false}; // spindle
+motorDC m2 = {"m2", 0, 0, (52.9-15)/3078, 0, 0, 0, 4, 5, 31, 0, false}; // timing belt
 
 //Servo sv3;
 motorSV m3 = {"m3", 90, 0, 90, 0, false};
