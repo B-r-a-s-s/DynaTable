@@ -4,8 +4,8 @@ Servo sL, sR;
 
 int D = 2000;
 
-int LB = 65;
-int HB = 99;
+int LB = 90;
+int HB = 90;
 
 int posL = LB;
 int posR = HB;
@@ -80,16 +80,13 @@ void loop() {
           while (true) {
             if (Serial.available() > 0) {
               deg = Serial.parseInt();
-              Serial.print(deg);
-              Serial.print(" (");
-              Serial.print(HB+LB-deg);
-              Serial.println(")");
-              if (deg < 180 && deg >= 0) {
+              Serial.println(deg);
+              if (deg < 180 && deg > 0) {
                 input = true;
                 break;
               }else{
                 Serial.println();
-                Serial.println("Please enter value between 0 and 179.");
+                Serial.println("Please enter value between 1 and 179.");
               }
             }
   
