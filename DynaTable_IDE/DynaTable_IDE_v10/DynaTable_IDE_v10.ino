@@ -37,7 +37,7 @@ struct motorSV {
 const long Tpress = 1000;
 
 const int Amp1 = 15; // Maximum amplitude (mm)
-const int Amp2 = 15;
+const int Amp2 = 5;
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
 
