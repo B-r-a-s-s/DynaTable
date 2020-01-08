@@ -7,6 +7,9 @@ int D = 2000;
 int LB = 90;
 int HB = 90;
 
+// L cal 130
+// R cal
+
 int posL = LB;
 int posR = HB;
 String dir = "B";

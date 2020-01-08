@@ -21,8 +21,8 @@ motorDC stateMachineDC(motorDC mTemp) {
           digitalWrite(mTemp.p2, LOW);
         } else {
           mTemp.calCount += 1;
-          mTemp.limit = -mTemp.amp/mTemp.mmptick;
-//          mTemp.limit = random(-mTemp.amp/mTemp.mmptick,1+mTemp.amp/mTemp.mmptick);
+//          mTemp.limit = -mTemp.amp/mTemp.mmptick;
+          mTemp.limit = random(-mTemp.amp/mTemp.mmptick,1+mTemp.amp/mTemp.mmptick);
           mTemp = path(mTemp);
         }
         mTemp.pulse = false;

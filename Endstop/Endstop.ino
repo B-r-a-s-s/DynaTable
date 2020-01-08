@@ -1,4 +1,4 @@
-const int ESP = 31;
+const int ESP = 30;
 
 int ESI;
 
