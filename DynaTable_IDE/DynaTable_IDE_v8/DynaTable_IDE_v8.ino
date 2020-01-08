@@ -29,7 +29,7 @@ struct motorSV {
 const long Tpress = 1000;
 
 const int L = 5; // Number of levels
-const int A = 10; // Maximum amplitude (mm)
+const int A = 5; // Maximum amplitude (mm)
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
 /*

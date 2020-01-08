@@ -2,11 +2,11 @@
 
 motorDC stateMachineDC(motorDC mTemp) {
   
-  Serial.print(mTemp.mname);
-  Serial.print(" | limit: ");
-  Serial.print(mTemp.limit);
-  Serial.print(" | cRE: ");
-  Serial.println(mTemp.cRE);
+//  Serial.print(mTemp.mname);
+//  Serial.print(" | limit: ");
+//  Serial.print(mTemp.limit);
+//  Serial.print(" | cRE: ");
+//  Serial.println(mTemp.cRE);
   
   switch (mTemp.currentState) {
     
@@ -14,13 +14,13 @@ motorDC stateMachineDC(motorDC mTemp) {
 
     if (millis() >= mTemp.halt + wait) {
       if (mode == 1 || (mode == 0 && enable == 1)) {
-        if (moveCount >= maxMoves) {
+        if (mTemp.calCount >= maxMoves) {
           mTemp.currentState = 4;
-          moveCount = 0;
-          digitalWrite(mTemp.p1, HIGH); // CHECK IF THIS IS CORRECT DIRECTION FOR BOTH MOTORS
-          digitalWrite(mTemp.p2, LOW); // CHECK IF THIS IS CORRECT DIRECTION FOR BOTH MOTORS
+          mTemp.calCount = 0;
+          digitalWrite(mTemp.p1, HIGH);
+          digitalWrite(mTemp.p2, LOW);
         } else {
-          moveCount += 1;
+          mTemp.calCount += 1;
           mTemp.limit = random(-A/mTemp.mmptick,1+A/mTemp.mmptick);
           mTemp = path(mTemp);
         }
@@ -78,12 +78,15 @@ motorDC stateMachineDC(motorDC mTemp) {
 
     case 4: // calibrate
 
-    if (mTemp.ESP == true) {
+    mTemp.ESI = digitalRead(mTemp.ESP);
+
+    if (mTemp.ESI == true) {
       digitalWrite(mTemp.p1, LOW);
       digitalWrite(mTemp.p2, LOW);
-      mTemp.cRE = -A/mTemp.mmptick; // CHECK IF ADDITION IS AWAY FROM ENDSTOP FOR BOTH MOTORS
+      mTemp.cRE = A/mTemp.mmptick; // CHECK IF ADDITION IS AWAY FROM ENDSTOP FOR BOTH MOTORS
       mTemp.halt = millis();
-      Serial.println("Edge detected");
+      mTemp.ESI = false;
+      Serial.println("Calibrated");
       if (mode == false) {
         mTemp.currentState = 3;
       } else if (mode == true) {

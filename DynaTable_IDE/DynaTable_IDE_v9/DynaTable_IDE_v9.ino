@@ -10,12 +10,20 @@
  * C. Kos, B. Cheizoo, J. de Wolde, T. Hartsuijker
  */
 
+/*
+ * Endstop wiring
+ * 
+ * Low to ground
+ * Mid to nothing, maybe ground for completeness' sake
+ * High to input pin
+ */
+
 // Declaration of structures
 
 struct motorDC {
   String mname;
   float cRE, limit, mmptick;
-  int currentState, rREPrev, add, p1, p2, pulse, ESP;
+  int currentState, rREPrev, add, p1, p2, pulse, ESP, ESI, calCount;
   unsigned long halt;
 };
 
@@ -28,12 +36,11 @@ struct motorSV {
 
 const long Tpress = 1000;
 
-const int L = 5; // Number of levels DOES NOTHING ANYMORE, HOW WAS IT USED?
-const int A = 10; // Maximum amplitude (mm)
+const int A = 15; // Maximum amplitude (mm)
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
 
-const int maxMoves = 5; // Number of moves before forced calibration
+const int maxMoves = 2; // Number of moves before forced calibration
 
 const float m1ticks = (57.1-10.1)/1779; // mm/tick
 const float m2ticks = (52.9-15)/3078; // mm/tick
@@ -76,12 +83,10 @@ unsigned long tmode = 0;
 bool timer = false;
 int pulseFlag = false;
 
-int moveCount = maxMoves; // forces calibration at first move
-
 // Initialization of motor structures
 
-motorDC m1 = {"m1", 0, 0, m1ticks, 0, 0, 0, m1p1, m1p2, false, m1ESP, 0};
-motorDC m2 = {"m2", 0, 0, m2ticks, 0, 0, 0, m2p1, m2p2, false, m2ESP, 0};
+motorDC m1 = {"m1", 0, 0, m1ticks, 0, 0, 0, m1p1, m1p2, false, m1ESP, false, maxMoves, 0};
+motorDC m2 = {"m2", 0, 0, m2ticks, 0, 0, 0, m2p1, m2p2, false, m2ESP, false, maxMoves, 0};
 
 //Servo sv3;
 //motorSV m3 = {90, 0};
@@ -100,8 +105,12 @@ void setup() {
   Serial.println();
   
   pinMode(ENABLE, INPUT);
+  
   pinMode(m1ESP, INPUT);
+  pinMode(m1ESP, INPUT_PULLUP);
+  
   pinMode(m2ESP, INPUT);
+  pinMode(m2ESP, INPUT_PULLUP);
   
   pinMode(m1.p1, OUTPUT); // IN2 / OUT2 + white
   pinMode(m1.p2, OUTPUT); // IN1 / OUT1 + red
@@ -125,8 +134,17 @@ void setup() {
 
 void loop() {
 
-//  Serial.print("Moves: ");
-//  Serial.println(moveCount);
+//  Serial.print("m1 cRE: ");
+//  Serial.println(m1.cRE);
+
+//  Serial.print(" | Moves: ");
+//  Serial.println(m1.calCount);
+
+//  Serial.print(" | ESI: ");
+//  Serial.println(m1.ESI);
+
+//  Serial.print(" | State: ");
+//  Serial.println(m2.currentState);
 
   enable = digitalRead(ENABLE);
 
@@ -170,7 +188,7 @@ void loop() {
 
   m1 = stateMachineDC(m1);
   
-//  m2 = stateMachineDC(m2);
+  m2 = stateMachineDC(m2);
 
   int rREX = rotEncX.read();
   if (rREX != m1.rREPrev) {
