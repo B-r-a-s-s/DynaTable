@@ -36,8 +36,8 @@ struct motorSV {
 
 const long Tpress = 1000;
 
-const int Amp1 = 15; // Maximum amplitude (mm)
-const int Amp2 = 5;
+const int Amp1 = 20; // Maximum amplitude (mm)
+const int Amp2 = 20;
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
 
@@ -46,7 +46,7 @@ const int maxMoves = 2; // Number of moves before forced calibration
 const float m1ticks = (57.1-10.1)/1779; // mm/tick
 const float m2ticks = (52.9-15)/3078; // mm/tick
 
-const int wait = 100;
+const int wait = 1000;
 
 /*
 const int SV3 = ?;
@@ -136,7 +136,7 @@ void setup() {
 void loop() {
 
 //  Serial.print("m1 cRE: ");
-//  Serial.println(m1.cRE);
+  Serial.println(m2.cRE);
 
 //  Serial.print(" | Moves: ");
 //  Serial.println(m1.calCount);
@@ -187,9 +187,9 @@ void loop() {
 //  Serial.print(" | ");
 //  Serial.println(pulseFlag);
 
-//  m1 = stateMachineDC(m1);
+  m1 = stateMachineDC(m1);
   
-  m2 = stateMachineDC(m2);
+//  m2 = stateMachineDC(m2);
 
   int rREX = rotEncX.read();
   if (rREX != m1.rREPrev) {

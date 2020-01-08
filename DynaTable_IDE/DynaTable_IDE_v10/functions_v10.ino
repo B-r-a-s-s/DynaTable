@@ -21,7 +21,8 @@ motorDC stateMachineDC(motorDC mTemp) {
           digitalWrite(mTemp.p2, LOW);
         } else {
           mTemp.calCount += 1;
-          mTemp.limit = random(-mTemp.amp/mTemp.mmptick,1+mTemp.amp/mTemp.mmptick);
+          mTemp.limit = -mTemp.amp/mTemp.mmptick;
+//          mTemp.limit = random(-mTemp.amp/mTemp.mmptick,1+mTemp.amp/mTemp.mmptick);
           mTemp = path(mTemp);
         }
         mTemp.pulse = false;
@@ -83,7 +84,7 @@ motorDC stateMachineDC(motorDC mTemp) {
     if (mTemp.ESI == true) {
       digitalWrite(mTemp.p1, LOW);
       digitalWrite(mTemp.p2, LOW);
-      mTemp.cRE = mTemp.amp/mTemp.mmptick; // CHECK IF ADDITION IS AWAY FROM ENDSTOP FOR BOTH MOTORS
+      mTemp.cRE = 1 + mTemp.amp/mTemp.mmptick;
       mTemp.halt = millis();
       mTemp.ESI = false;
       Serial.println("Calibrated");
