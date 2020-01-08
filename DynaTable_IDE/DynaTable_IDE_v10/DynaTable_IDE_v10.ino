@@ -36,8 +36,9 @@ struct motorSV {
 
 const long Tpress = 1000;
 
-const int Amp1 = 18; // Maximum amplitude (mm)
-const int Amp2 = 24;
+//const int Amp1 = 18; // Maximum amplitude (mm)
+const int Amp1 = 12; // Maximum amplitude (mm), safe to work with unattended (doesn't touch bridge edge)
+const int Amp2 = 24; // Maximum amplitude (mm)
 
 const float Tservo = 500; // Servo time in ms (min. 450 ms)
 

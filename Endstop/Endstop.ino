@@ -5,7 +5,7 @@ int ESI;
 int edgeFlag = false;
 
 // TEMPORARY TIMER (proof of concept)
-unsigned long edgeWait = 3000;
+unsigned long edgeWait = 1500;
 unsigned long edgeTime;
 
 /*

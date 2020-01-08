@@ -21,7 +21,7 @@ motorDC stateMachineDC(motorDC mTemp) {
           digitalWrite(mTemp.p2, LOW);
         } else {
           mTemp.calCount += 1;
-//          mTemp.limit = -mTemp.amp/mTemp.mmptick;
+//          mTemp.limit = -mTemp.amp/mTemp.mmptick; // used to test outer limit (opposite from endstops)
           mTemp.limit = random(-mTemp.amp/mTemp.mmptick,1+mTemp.amp/mTemp.mmptick);
           mTemp = path(mTemp);
         }
@@ -87,7 +87,8 @@ motorDC stateMachineDC(motorDC mTemp) {
       mTemp.cRE = 1 + mTemp.amp/mTemp.mmptick;
       mTemp.halt = millis();
       mTemp.ESI = false;
-      Serial.println("Calibrated");
+      Serial.println("Calibrated ");
+//      Serial.println(mTemp.mname);
       if (mode == false) {
         mTemp.currentState = 3;
       } else if (mode == true) {
