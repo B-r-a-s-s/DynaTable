@@ -187,7 +187,7 @@ void loop() {
 //  Serial.print(" | ");
 //  Serial.println(pulseFlag);
 
-  m1 = stateMachineDC(m1);
+//  m1 = stateMachineDC(m1);
   
   m2 = stateMachineDC(m2);
 
