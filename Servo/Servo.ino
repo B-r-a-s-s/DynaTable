@@ -4,11 +4,11 @@ Servo sL, sR;
 
 int D = 2000;
 
-int LB = 90;
+int LB = 120;
 int HB = 90;
 
-// L cal 130
-// R cal
+// L cal 120
+// R cal 90
 
 int posL = LB;
 int posR = HB;
