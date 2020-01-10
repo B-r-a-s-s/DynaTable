@@ -4,11 +4,11 @@ Servo sL, sR;
 
 int D = 2000;
 
-int LB = 120;
-int HB = 90;
+int LB = 90;
+int HB = 70;
 
-// L cal 120
-// R cal 90
+// L cal 90
+// R cal 70
 
 int posL = LB;
 int posR = HB;
@@ -45,6 +45,16 @@ void setup() {
   Serial.print(" | posR: ");
   Serial.print(posR);
   Serial.println();
+
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+
+  digitalWrite(2, HIGH);
+  digitalWrite(3, LOW);
+  digitalWrite(4, HIGH);
+  digitalWrite(5, LOW);
 
 }
 
