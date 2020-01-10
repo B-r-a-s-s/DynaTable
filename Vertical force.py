@@ -7,15 +7,15 @@ alpha = 75 # deg
 beta = 75 # deg
 
 # Tkg = 4.375 # power per motor in kg*cm
-Tkg = 11*0.8 # power per motor in kg*cm
+Tkg = 11 # power per motor in kg*cm
 T = Tkg * 0.0981 # conversion factor
 
 nm = 2 # number of motors
 
 # Worst case, fully flat
 
-alpha = 28 # deg
-beta = 15 # degrees
+alpha = 14.55 # deg
+beta = 7.33 # degrees
 
 # alpha = 23 # deg
 # beta = 6 # degrees
